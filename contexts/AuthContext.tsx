@@ -1,11 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import createContextHook from '@nkzw/create-context-hook';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { router } from 'expo-router';
 
 const AUTH_KEY = '@inventory_auth';
 
 interface User {
   username: string;
+  password: string;
 }
 
 export const [AuthProvider, useAuth] = createContextHook(() => {
@@ -31,7 +33,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
 
   const login = useCallback(async (username: string, password: string) => {
     if (username === 'admin' && password === 'admin123') {
-      const userData = { username };
+      const userData = { username, password };
       await AsyncStorage.setItem(AUTH_KEY, JSON.stringify(userData));
       setUser(userData);
       return true;
@@ -42,7 +44,27 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
   const logout = useCallback(async () => {
     await AsyncStorage.removeItem(AUTH_KEY);
     setUser(null);
+    router.replace('/login');
   }, []);
+
+  const changePassword = useCallback(async (currentPassword: string, newPassword: string) => {
+    if (!user) return false;
+    if (user.password !== currentPassword) return false;
+    
+    const updatedUser = { ...user, password: newPassword };
+    await AsyncStorage.setItem(AUTH_KEY, JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    return true;
+  }, [user]);
+
+  const changeUsername = useCallback(async (newUsername: string) => {
+    if (!user) return false;
+    
+    const updatedUser = { ...user, username: newUsername };
+    await AsyncStorage.setItem(AUTH_KEY, JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    return true;
+  }, [user]);
 
   return useMemo(() => ({
     user,
@@ -50,5 +72,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     isAuthenticated: !!user,
     login,
     logout,
-  }), [user, isLoading, login, logout]);
+    changePassword,
+    changeUsername,
+  }), [user, isLoading, login, logout, changePassword, changeUsername]);
 });
