@@ -1,28 +1,8 @@
 import { Tabs } from "expo-router";
-import { BarChart3, FileText, LayoutDashboard, LogOut, Package } from "lucide-react-native";
+import { BarChart3, FileText, LayoutDashboard, Package, UserCircle } from "lucide-react-native";
 import React from "react";
-import { Alert, TouchableOpacity } from "react-native";
-
-import { useAuth } from "@/contexts/AuthContext";
 
 export default function TabLayout() {
-  const { logout } = useAuth();
-
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: logout,
-        },
-      ]
-    );
-  };
-
   return (
     <Tabs
       screenOptions={{
@@ -38,15 +18,6 @@ export default function TabLayout() {
           fontSize: 12,
           fontWeight: '600' as const,
         },
-        headerRight: () => (
-          <TouchableOpacity
-            onPress={handleLogout}
-            style={{ marginRight: 16 }}
-            testID="logout-button"
-          >
-            <LogOut size={24} color="#EF4444" />
-          </TouchableOpacity>
-        ),
       }}
     >
       <Tabs.Screen
@@ -79,6 +50,14 @@ export default function TabLayout() {
           title: "Reports",
           headerShown: false,
           tabBarIcon: ({ color }) => <FileText size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="account"
+        options={{
+          title: "Account",
+          headerShown: false,
+          tabBarIcon: ({ color }) => <UserCircle size={24} color={color} />,
         }}
       />
     </Tabs>
