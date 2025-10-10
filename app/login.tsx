@@ -60,6 +60,7 @@ export default function LoginScreen() {
                 <Lock size={48} color="#fff" strokeWidth={2} />
               </View>
               <Text style={styles.title}>Inventory Manager</Text>
+              <Text style={styles.brandText}>by CATronics</Text>
               <Text style={styles.subtitle}>Sign in to continue</Text>
             </View>
 
@@ -164,6 +165,12 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '700' as const,
     color: '#1a1a1a',
+    marginBottom: 4,
+  },
+  brandText: {
+    fontSize: 16,
+    fontWeight: '500' as const,
+    color: '#007AFF',
     marginBottom: 8,
   },
   subtitle: {
