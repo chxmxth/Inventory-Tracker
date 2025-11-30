@@ -1,4 +1,4 @@
-import { Edit2, Package, Plus, Search, Trash2 } from 'lucide-react-native';
+import { Edit2, Package, Plus, Search, Trash2, AlertCircle } from 'lucide-react-native';
 import React, { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -19,7 +19,7 @@ import type { Product } from '@/types/inventory';
 
 export default function ProductsScreen() {
   const insets = useSafeAreaInsets();
-  const { products, addProduct, updateProduct, deleteProduct, isLoading } = useInventory();
+  const { products, addProduct, updateProduct, deleteProduct, removeItem, isLoading } = useInventory();
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -31,6 +31,11 @@ export default function ProductsScreen() {
     stock: '',
     supplierName: '',
   });
+  const [removeModalVisible, setRemoveModalVisible] = useState(false);
+  const [removingProduct, setRemovingProduct] = useState<Product | null>(null);
+  const [removeQuantity, setRemoveQuantity] = useState('');
+  const [removeReason, setRemoveReason] = useState<'damaged' | 'expired' | 'lost' | 'other'>('damaged');
+  const [removeNotes, setRemoveNotes] = useState('');
 
   const filteredProducts = useMemo(() => {
     if (!searchQuery) return products;
@@ -137,6 +142,40 @@ export default function ProductsScreen() {
     );
   };
 
+  const handleOpenRemoveModal = (product: Product) => {
+    setRemovingProduct(product);
+    setRemoveQuantity('');
+    setRemoveReason('damaged');
+    setRemoveNotes('');
+    setRemoveModalVisible(true);
+  };
+
+  const handleRemoveItems = async () => {
+    if (!removingProduct || !removeQuantity) {
+      Alert.alert('Error', 'Please enter quantity');
+      return;
+    }
+
+    const quantity = parseInt(removeQuantity, 10);
+    if (isNaN(quantity) || quantity <= 0) {
+      Alert.alert('Error', 'Please enter a valid quantity');
+      return;
+    }
+
+    if (quantity > removingProduct.stock) {
+      Alert.alert('Error', 'Quantity exceeds available stock');
+      return;
+    }
+
+    try {
+      await removeItem(removingProduct.id, quantity, removeReason, removeNotes || undefined);
+      setRemoveModalVisible(false);
+      Alert.alert('Success', 'Items removed from inventory');
+    } catch (error) {
+      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to remove items');
+    }
+  };
+
   const getStockColor = (stock: number) => {
     if (stock === 0) return '#EF4444';
     if (stock <= 10) return '#F59E0B';
@@ -151,6 +190,12 @@ export default function ProductsScreen() {
           <Text style={styles.productCategory}>{item.category}</Text>
         </View>
         <View style={styles.productActions}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => handleOpenRemoveModal(item)}
+          >
+            <AlertCircle size={18} color="#F59E0B" />
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => handleOpenModal(item)}
@@ -341,6 +386,109 @@ export default function ProductsScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                   <Text style={styles.saveButtonText}>Save</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={removeModalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setRemoveModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Remove Items</Text>
+              <TouchableOpacity onPress={() => setRemoveModalVisible(false)}>
+                <Text style={styles.modalClose}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalBody} showsVerticalScrollIndicator={false}>
+              {removingProduct && (
+                <View style={styles.removeInfoCard}>
+                  <Text style={styles.removeInfoLabel}>Product</Text>
+                  <Text style={styles.removeInfoValue}>{removingProduct.name}</Text>
+                  <Text style={styles.removeInfoStock}>Available: {removingProduct.stock} units</Text>
+                </View>
+              )}
+
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Quantity to Remove *</Text>
+                <TextInput
+                  style={styles.formInput}
+                  placeholder="0"
+                  placeholderTextColor="#9CA3AF"
+                  keyboardType="numeric"
+                  value={removeQuantity}
+                  onChangeText={setRemoveQuantity}
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Reason *</Text>
+                <View style={styles.reasonButtons}>
+                  <TouchableOpacity
+                    style={[styles.reasonButton, removeReason === 'damaged' && styles.reasonButtonActive]}
+                    onPress={() => setRemoveReason('damaged')}
+                  >
+                    <Text style={[styles.reasonButtonText, removeReason === 'damaged' && styles.reasonButtonTextActive]}>
+                      Damaged
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.reasonButton, removeReason === 'expired' && styles.reasonButtonActive]}
+                    onPress={() => setRemoveReason('expired')}
+                  >
+                    <Text style={[styles.reasonButtonText, removeReason === 'expired' && styles.reasonButtonTextActive]}>
+                      Expired
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.reasonButton, removeReason === 'lost' && styles.reasonButtonActive]}
+                    onPress={() => setRemoveReason('lost')}
+                  >
+                    <Text style={[styles.reasonButtonText, removeReason === 'lost' && styles.reasonButtonTextActive]}>
+                      Lost
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.reasonButton, removeReason === 'other' && styles.reasonButtonActive]}
+                    onPress={() => setRemoveReason('other')}
+                  >
+                    <Text style={[styles.reasonButtonText, removeReason === 'other' && styles.reasonButtonTextActive]}>
+                      Other
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Notes (Optional)</Text>
+                <TextInput
+                  style={[styles.formInput, styles.textArea]}
+                  placeholder="Additional details..."
+                  placeholderTextColor="#9CA3AF"
+                  value={removeNotes}
+                  onChangeText={setRemoveNotes}
+                  multiline
+                  numberOfLines={3}
+                />
+              </View>
+
+              <View style={styles.formActions}>
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={() => setRemoveModalVisible(false)}
+                >
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.removeButton} onPress={handleRemoveItems}>
+                  <Text style={styles.removeButtonText}>Remove Items</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
@@ -576,6 +724,68 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   saveButtonText: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    color: '#fff',
+  },
+  removeInfoCard: {
+    backgroundColor: '#FEF3C7',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 20,
+  },
+  removeInfoLabel: {
+    fontSize: 12,
+    color: '#92400E',
+    marginBottom: 4,
+  },
+  removeInfoValue: {
+    fontSize: 18,
+    fontWeight: '700' as const,
+    color: '#111827',
+    marginBottom: 4,
+  },
+  removeInfoStock: {
+    fontSize: 14,
+    color: '#78350F',
+  },
+  reasonButtons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  reasonButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 2,
+    borderColor: '#E5E7EB',
+  },
+  reasonButtonActive: {
+    backgroundColor: '#FEF3C7',
+    borderColor: '#F59E0B',
+  },
+  reasonButtonText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: '#6B7280',
+  },
+  reasonButtonTextActive: {
+    color: '#D97706',
+  },
+  textArea: {
+    height: 80,
+    textAlignVertical: 'top',
+  },
+  removeButton: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 8,
+    backgroundColor: '#F59E0B',
+    alignItems: 'center',
+  },
+  removeButtonText: {
     fontSize: 16,
     fontWeight: '600' as const,
     color: '#fff',

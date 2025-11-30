@@ -114,6 +114,39 @@ export const [InventoryProvider, useInventory] = createContextHook(() => {
     await saveTransactions([newTransaction, ...transactions]);
   }, [products, transactions, updateProduct, saveTransactions]);
 
+  const removeItem = useCallback(async (
+    productId: string,
+    quantity: number,
+    reason: 'damaged' | 'expired' | 'lost' | 'other',
+    notes?: string
+  ) => {
+    const product = products.find((p) => p.id === productId);
+    if (!product) {
+      throw new Error('Product not found');
+    }
+
+    if (product.stock < quantity) {
+      throw new Error('Insufficient stock');
+    }
+
+    const newTransaction: Transaction = {
+      id: Date.now().toString(),
+      type: 'removal',
+      productId,
+      productName: product.name,
+      quantity,
+      pricePerUnit: product.buyingPrice,
+      totalAmount: product.buyingPrice * quantity,
+      date: new Date().toISOString(),
+      notes,
+      removalReason: reason,
+    };
+
+    const newStock = product.stock - quantity;
+    await updateProduct(productId, { stock: newStock });
+    await saveTransactions([newTransaction, ...transactions]);
+  }, [products, transactions, updateProduct, saveTransactions]);
+
   const getDashboardSummary = useCallback((): DashboardSummary => {
     const now = new Date();
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -228,7 +261,8 @@ export const [InventoryProvider, useInventory] = createContextHook(() => {
     updateProduct,
     deleteProduct,
     addTransaction,
+    removeItem,
     getDashboardSummary,
     getReportData,
-  }), [products, transactions, isLoading, addProduct, updateProduct, deleteProduct, addTransaction, getDashboardSummary, getReportData]);
+  }), [products, transactions, isLoading, addProduct, updateProduct, deleteProduct, addTransaction, removeItem, getDashboardSummary, getReportData]);
 });

@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Plus, Search, TrendingUp, TrendingDown, Calendar, Package } from 'lucide-react-native';
+import { Plus, Search, TrendingUp, TrendingDown, Calendar, Package, AlertTriangle } from 'lucide-react-native';
 import { useInventory } from '@/contexts/InventoryContext';
 import type { Transaction } from '@/types/inventory';
 
@@ -19,7 +19,7 @@ export default function TransactionsScreen() {
   const insets = useSafeAreaInsets();
   const { transactions, products, addTransaction, isLoading } = useInventory();
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'sale' | 'purchase'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'sale' | 'purchase' | 'removal'>('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [transactionType, setTransactionType] = useState<'sale' | 'purchase'>('sale');
   const [selectedProductId, setSelectedProductId] = useState('');
@@ -112,30 +112,42 @@ export default function TransactionsScreen() {
       </View>
 
       <View style={styles.filterContainer}>
-        <TouchableOpacity
-          style={[styles.filterButton, filterType === 'all' && styles.filterButtonActive]}
-          onPress={() => setFilterType('all')}
-        >
-          <Text style={[styles.filterText, filterType === 'all' && styles.filterTextActive]}>
-            All
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filterButton, filterType === 'sale' && styles.filterButtonActive]}
-          onPress={() => setFilterType('sale')}
-        >
-          <Text style={[styles.filterText, filterType === 'sale' && styles.filterTextActive]}>
-            Sales
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filterButton, filterType === 'purchase' && styles.filterButtonActive]}
-          onPress={() => setFilterType('purchase')}
-        >
-          <Text style={[styles.filterText, filterType === 'purchase' && styles.filterTextActive]}>
-            Purchases
-          </Text>
-        </TouchableOpacity>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.filterRow}>
+            <TouchableOpacity
+              style={[styles.filterButton, filterType === 'all' && styles.filterButtonActive]}
+              onPress={() => setFilterType('all')}
+            >
+              <Text style={[styles.filterText, filterType === 'all' && styles.filterTextActive]}>
+                All
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.filterButton, filterType === 'sale' && styles.filterButtonActive]}
+              onPress={() => setFilterType('sale')}
+            >
+              <Text style={[styles.filterText, filterType === 'sale' && styles.filterTextActive]}>
+                Sales
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.filterButton, filterType === 'purchase' && styles.filterButtonActive]}
+              onPress={() => setFilterType('purchase')}
+            >
+              <Text style={[styles.filterText, filterType === 'purchase' && styles.filterTextActive]}>
+                Purchases
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.filterButton, filterType === 'removal' && styles.filterButtonActive]}
+              onPress={() => setFilterType('removal')}
+            >
+              <Text style={[styles.filterText, filterType === 'removal' && styles.filterTextActive]}>
+                Removals
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -155,13 +167,17 @@ export default function TransactionsScreen() {
                   <View
                     style={[
                       styles.transactionIcon,
-                      transaction.type === 'sale' ? styles.saleIcon : styles.purchaseIcon,
+                      transaction.type === 'sale' ? styles.saleIcon : 
+                      transaction.type === 'purchase' ? styles.purchaseIcon : 
+                      styles.removalIcon,
                     ]}
                   >
                     {transaction.type === 'sale' ? (
                       <TrendingUp size={20} color="#10B981" />
-                    ) : (
+                    ) : transaction.type === 'purchase' ? (
                       <TrendingDown size={20} color="#F59E0B" />
+                    ) : (
+                      <AlertTriangle size={20} color="#EF4444" />
                     )}
                   </View>
                   <View style={styles.transactionInfo}>
@@ -176,10 +192,13 @@ export default function TransactionsScreen() {
                   <Text
                     style={[
                       styles.transactionAmount,
-                      transaction.type === 'sale' ? styles.saleAmount : styles.purchaseAmount,
+                      transaction.type === 'sale' ? styles.saleAmount : 
+                      transaction.type === 'purchase' ? styles.purchaseAmount : 
+                      styles.removalAmount,
                     ]}
                   >
-                    {transaction.type === 'sale' ? '+' : '-'}{formatCurrency(transaction.totalAmount)}
+                    {transaction.type === 'sale' ? '+' : transaction.type === 'purchase' ? '-' : ''}
+                    {transaction.type === 'removal' ? 'Loss: ' : ''}{formatCurrency(transaction.totalAmount)}
                   </Text>
                   <Text style={styles.transactionQuantity}>{transaction.quantity} units</Text>
                 </View>
@@ -187,6 +206,13 @@ export default function TransactionsScreen() {
               {transaction.profit !== undefined && transaction.profit > 0 && (
                 <View style={styles.profitBadge}>
                   <Text style={styles.profitText}>Profit: {formatCurrency(transaction.profit)}</Text>
+                </View>
+              )}
+              {transaction.type === 'removal' && transaction.removalReason && (
+                <View style={styles.removalReasonBadge}>
+                  <Text style={styles.removalReasonText}>
+                    Reason: {transaction.removalReason.charAt(0).toUpperCase() + transaction.removalReason.slice(1)}
+                  </Text>
                 </View>
               )}
               {transaction.notes && (
@@ -370,11 +396,13 @@ const styles = StyleSheet.create({
     color: '#111827',
   },
   filterContainer: {
-    flexDirection: 'row' as const,
     paddingHorizontal: 20,
     paddingBottom: 16,
-    gap: 8,
     backgroundColor: '#FFFFFF',
+  },
+  filterRow: {
+    flexDirection: 'row' as const,
+    gap: 8,
   },
   filterButton: {
     paddingHorizontal: 20,
@@ -450,6 +478,9 @@ const styles = StyleSheet.create({
   purchaseIcon: {
     backgroundColor: '#FEF3C7',
   },
+  removalIcon: {
+    backgroundColor: '#FEE2E2',
+  },
   transactionInfo: {
     flex: 1,
   },
@@ -482,6 +513,9 @@ const styles = StyleSheet.create({
   purchaseAmount: {
     color: '#F59E0B',
   },
+  removalAmount: {
+    color: '#EF4444',
+  },
   transactionQuantity: {
     fontSize: 12,
     color: '#6B7280',
@@ -498,6 +532,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600' as const,
     color: '#059669',
+  },
+  removalReasonBadge: {
+    marginTop: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: '#FEE2E2',
+    borderRadius: 8,
+    alignSelf: 'flex-start' as const,
+  },
+  removalReasonText: {
+    fontSize: 12,
+    fontWeight: '600' as const,
+    color: '#DC2626',
   },
   transactionNotes: {
     marginTop: 12,

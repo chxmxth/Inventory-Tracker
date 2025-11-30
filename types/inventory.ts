@@ -11,7 +11,7 @@ export type Product = {
   updatedAt: string;
 };
 
-export type TransactionType = 'sale' | 'purchase';
+export type TransactionType = 'sale' | 'purchase' | 'removal';
 
 export type Transaction = {
   id: string;
@@ -24,6 +24,7 @@ export type Transaction = {
   profit?: number;
   date: string;
   notes?: string;
+  removalReason?: 'damaged' | 'expired' | 'lost' | 'other';
 };
 
 export type DashboardSummary = {
