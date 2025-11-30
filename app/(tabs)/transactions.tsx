@@ -9,9 +9,12 @@ import {
   Modal,
   Alert,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Plus, Search, TrendingUp, TrendingDown, Calendar, Package, AlertTriangle } from 'lucide-react-native';
+import { Plus, Search, TrendingUp, TrendingDown, Calendar, Package, AlertTriangle, FileText } from 'lucide-react-native';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 import { useInventory } from '@/contexts/InventoryContext';
 import type { Transaction } from '@/types/inventory';
 
@@ -26,6 +29,8 @@ export default function TransactionsScreen() {
   const [quantity, setQuantity] = useState('');
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter((transaction) => {
@@ -81,6 +86,289 @@ export default function TransactionsScreen() {
 
   const formatCurrency = (amount: number) => {
     return `Rs. ${amount.toLocaleString()}`;
+  };
+
+  const generateInvoiceHTML = (transaction: Transaction) => {
+    const company = 'CATronics';
+    const appName = 'Inventory Manager';
+    const date = new Date(transaction.date);
+    const formattedDate = date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+          <style>
+            body {
+              font-family: 'Helvetica Neue', 'Helvetica', Arial, sans-serif;
+              padding: 40px;
+              background: white;
+              margin: 0;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 40px;
+              border-bottom: 3px solid #6366F1;
+              padding-bottom: 20px;
+            }
+            .company-name {
+              font-size: 32px;
+              font-weight: bold;
+              color: #111827;
+              margin: 0;
+            }
+            .app-name {
+              font-size: 14px;
+              color: #6B7280;
+              margin: 5px 0 0 0;
+            }
+            .invoice-title {
+              font-size: 24px;
+              font-weight: bold;
+              color: #374151;
+              margin: 30px 0 10px 0;
+            }
+            .invoice-details {
+              margin: 20px 0;
+              padding: 20px;
+              background: #F9FAFB;
+              border-radius: 8px;
+            }
+            .detail-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 8px 0;
+              border-bottom: 1px solid #E5E7EB;
+            }
+            .detail-row:last-child {
+              border-bottom: none;
+            }
+            .detail-label {
+              font-weight: 600;
+              color: #6B7280;
+            }
+            .detail-value {
+              color: #111827;
+              font-weight: 500;
+            }
+            .transaction-type {
+              display: inline-block;
+              padding: 6px 16px;
+              border-radius: 20px;
+              font-size: 14px;
+              font-weight: 600;
+              text-transform: uppercase;
+            }
+            .type-sale {
+              background: #D1FAE5;
+              color: #059669;
+            }
+            .type-purchase {
+              background: #FEF3C7;
+              color: #D97706;
+            }
+            .type-removal {
+              background: #FEE2E2;
+              color: #DC2626;
+            }
+            .items-table {
+              width: 100%;
+              margin: 30px 0;
+              border-collapse: collapse;
+            }
+            .items-table th {
+              background: #F3F4F6;
+              padding: 12px;
+              text-align: left;
+              font-weight: 600;
+              color: #374151;
+              border-bottom: 2px solid #E5E7EB;
+            }
+            .items-table td {
+              padding: 12px;
+              border-bottom: 1px solid #E5E7EB;
+              color: #111827;
+            }
+            .total-section {
+              margin-top: 30px;
+              padding-top: 20px;
+              border-top: 3px solid #6366F1;
+            }
+            .total-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 10px 0;
+              font-size: 18px;
+            }
+            .total-label {
+              font-weight: 600;
+              color: #374151;
+            }
+            .total-amount {
+              font-weight: bold;
+              color: #111827;
+              font-size: 24px;
+            }
+            .profit-row {
+              background: #D1FAE5;
+              padding: 12px;
+              border-radius: 8px;
+              margin-top: 10px;
+            }
+            .notes-section {
+              margin-top: 30px;
+              padding: 15px;
+              background: #FFFBEB;
+              border-left: 4px solid #F59E0B;
+              border-radius: 4px;
+            }
+            .notes-label {
+              font-weight: 600;
+              color: #92400E;
+              margin-bottom: 5px;
+            }
+            .notes-text {
+              color: #78350F;
+              font-style: italic;
+            }
+            .footer {
+              margin-top: 50px;
+              text-align: center;
+              color: #9CA3AF;
+              font-size: 12px;
+              padding-top: 20px;
+              border-top: 1px solid #E5E7EB;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1 class="company-name">${company}</h1>
+            <p class="app-name">${appName}</p>
+          </div>
+
+          <h2 class="invoice-title">
+            ${transaction.type === 'sale' ? 'Sales Invoice' : 
+              transaction.type === 'purchase' ? 'Purchase Invoice' : 'Removal Record'}
+          </h2>
+
+          <div class="invoice-details">
+            <div class="detail-row">
+              <span class="detail-label">Invoice ID:</span>
+              <span class="detail-value">#${transaction.id}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Date:</span>
+              <span class="detail-value">${formattedDate}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Type:</span>
+              <span class="transaction-type type-${transaction.type}">${transaction.type}</span>
+            </div>
+          </div>
+
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th style="text-align: right;">Quantity</th>
+                <th style="text-align: right;">Price per Unit</th>
+                <th style="text-align: right;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>${transaction.productName}</strong></td>
+                <td style="text-align: right;">${transaction.quantity} units</td>
+                <td style="text-align: right;">${formatCurrency(transaction.pricePerUnit)}</td>
+                <td style="text-align: right;"><strong>${formatCurrency(transaction.totalAmount)}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="total-section">
+            <div class="total-row">
+              <span class="total-label">Total Amount:</span>
+              <span class="total-amount">${formatCurrency(transaction.totalAmount)}</span>
+            </div>
+            ${transaction.profit !== undefined && transaction.profit > 0 ? `
+              <div class="profit-row">
+                <div class="total-row" style="margin: 0;">
+                  <span class="total-label" style="color: #059669;">Profit:</span>
+                  <span class="total-amount" style="color: #059669; font-size: 20px;">${formatCurrency(transaction.profit)}</span>
+                </div>
+              </div>
+            ` : ''}
+            ${transaction.type === 'removal' && transaction.removalReason ? `
+              <div style="background: #FEE2E2; padding: 12px; border-radius: 8px; margin-top: 10px;">
+                <div class="total-row" style="margin: 0;">
+                  <span class="total-label" style="color: #DC2626;">Removal Reason:</span>
+                  <span style="color: #DC2626; font-weight: 600;">${transaction.removalReason.charAt(0).toUpperCase() + transaction.removalReason.slice(1)}</span>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+
+          ${transaction.notes ? `
+            <div class="notes-section">
+              <div class="notes-label">Notes:</div>
+              <div class="notes-text">${transaction.notes}</div>
+            </div>
+          ` : ''}
+
+          <div class="footer">
+            <p>Generated by ${appName} by ${company}</p>
+            <p>This is a computer-generated document</p>
+          </div>
+        </body>
+      </html>
+    `;
+  };
+
+  const handlePrintInvoice = async (transaction: Transaction) => {
+    try {
+      const html = generateInvoiceHTML(transaction);
+      
+      if (Platform.OS === 'web') {
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          printWindow.document.write(html);
+          printWindow.document.close();
+          printWindow.focus();
+          setTimeout(() => {
+            printWindow.print();
+          }, 250);
+        }
+      } else {
+        const { uri } = await Print.printToFileAsync({ html });
+        const isAvailable = await Sharing.isAvailableAsync();
+        
+        if (isAvailable) {
+          await Sharing.shareAsync(uri, {
+            mimeType: 'application/pdf',
+            dialogTitle: `Invoice #${transaction.id}`,
+            UTI: 'com.adobe.pdf',
+          });
+        } else {
+          Alert.alert('Success', 'Invoice generated successfully');
+        }
+      }
+    } catch (error) {
+      console.error('Error generating invoice:', error);
+      Alert.alert('Error', 'Failed to generate invoice');
+    }
+  };
+
+  const handleViewInvoice = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setShowInvoiceModal(true);
   };
 
   if (isLoading) {
@@ -218,6 +506,15 @@ export default function TransactionsScreen() {
               {transaction.notes && (
                 <Text style={styles.transactionNotes}>{transaction.notes}</Text>
               )}
+              {transaction.type !== 'removal' && (
+                <TouchableOpacity
+                  style={styles.invoiceButton}
+                  onPress={() => handleViewInvoice(transaction)}
+                >
+                  <FileText size={16} color="#6366F1" />
+                  <Text style={styles.invoiceButtonText}>View Invoice</Text>
+                </TouchableOpacity>
+              )}
             </View>
           ))
         )}
@@ -343,6 +640,139 @@ export default function TransactionsScreen() {
                 )}
               </TouchableOpacity>
             </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={showInvoiceModal}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowInvoiceModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.invoiceModalContent, { paddingBottom: insets.bottom + 20 }]}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Invoice Preview</Text>
+              <TouchableOpacity onPress={() => setShowInvoiceModal(false)}>
+                <Text style={styles.modalClose}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            {selectedTransaction && (
+              <ScrollView style={styles.invoicePreview} showsVerticalScrollIndicator={false}>
+                <View style={styles.invoiceHeader}>
+                  <Text style={styles.invoiceCompany}>CATronics</Text>
+                  <Text style={styles.invoiceAppName}>Inventory Manager</Text>
+                </View>
+
+                <Text style={styles.invoiceTitle}>
+                  {selectedTransaction.type === 'sale' ? 'Sales Invoice' : 'Purchase Invoice'}
+                </Text>
+
+                <View style={styles.invoiceDetailsCard}>
+                  <View style={styles.invoiceDetailRow}>
+                    <Text style={styles.invoiceDetailLabel}>Invoice ID:</Text>
+                    <Text style={styles.invoiceDetailValue}>#{selectedTransaction.id}</Text>
+                  </View>
+                  <View style={styles.invoiceDetailRow}>
+                    <Text style={styles.invoiceDetailLabel}>Date:</Text>
+                    <Text style={styles.invoiceDetailValue}>
+                      {new Date(selectedTransaction.date).toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </Text>
+                  </View>
+                  <View style={styles.invoiceDetailRow}>
+                    <Text style={styles.invoiceDetailLabel}>Type:</Text>
+                    <View
+                      style={[
+                        styles.invoiceTypeBadge,
+                        selectedTransaction.type === 'sale'
+                          ? styles.invoiceTypeSale
+                          : styles.invoiceTypePurchase,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.invoiceTypeBadgeText,
+                          selectedTransaction.type === 'sale'
+                            ? styles.invoiceTypeSaleText
+                            : styles.invoiceTypePurchaseText,
+                        ]}
+                      >
+                        {selectedTransaction.type.toUpperCase()}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.invoiceItemsCard}>
+                  <View style={styles.invoiceItemsHeader}>
+                    <Text style={styles.invoiceItemsHeaderText}>Product</Text>
+                    <Text style={styles.invoiceItemsHeaderText}>Details</Text>
+                  </View>
+                  <View style={styles.invoiceItemRow}>
+                    <Text style={styles.invoiceProductName}>{selectedTransaction.productName}</Text>
+                  </View>
+                  <View style={styles.invoiceItemRow}>
+                    <Text style={styles.invoiceItemLabel}>Quantity:</Text>
+                    <Text style={styles.invoiceItemValue}>{selectedTransaction.quantity} units</Text>
+                  </View>
+                  <View style={styles.invoiceItemRow}>
+                    <Text style={styles.invoiceItemLabel}>Price per Unit:</Text>
+                    <Text style={styles.invoiceItemValue}>
+                      {formatCurrency(selectedTransaction.pricePerUnit)}
+                    </Text>
+                  </View>
+                  <View style={[styles.invoiceItemRow, styles.invoiceTotalRow]}>
+                    <Text style={styles.invoiceTotalLabel}>Total:</Text>
+                    <Text style={styles.invoiceTotalValue}>
+                      {formatCurrency(selectedTransaction.totalAmount)}
+                    </Text>
+                  </View>
+                </View>
+
+                {selectedTransaction.profit !== undefined && selectedTransaction.profit > 0 && (
+                  <View style={styles.invoiceProfitCard}>
+                    <Text style={styles.invoiceProfitLabel}>Profit:</Text>
+                    <Text style={styles.invoiceProfitValue}>
+                      {formatCurrency(selectedTransaction.profit)}
+                    </Text>
+                  </View>
+                )}
+
+                {selectedTransaction.notes && (
+                  <View style={styles.invoiceNotesCard}>
+                    <Text style={styles.invoiceNotesLabel}>Notes:</Text>
+                    <Text style={styles.invoiceNotesText}>{selectedTransaction.notes}</Text>
+                  </View>
+                )}
+
+                <View style={styles.invoiceFooter}>
+                  <Text style={styles.invoiceFooterText}>Generated by Inventory Manager by CATronics</Text>
+                  <Text style={styles.invoiceFooterText}>This is a computer-generated document</Text>
+                </View>
+              </ScrollView>
+            )}
+
+            <TouchableOpacity
+              style={styles.printButton}
+              onPress={() => {
+                if (selectedTransaction) {
+                  handlePrintInvoice(selectedTransaction);
+                }
+              }}
+            >
+              <FileText size={20} color="#FFFFFF" />
+              <Text style={styles.printButtonText}>
+                {Platform.OS === 'web' ? 'Print Invoice' : 'Share Invoice'}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -688,6 +1118,228 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   submitButtonText: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    color: '#FFFFFF',
+  },
+  invoiceButton: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    marginTop: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    backgroundColor: '#EEF2FF',
+    borderRadius: 8,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: '#C7D2FE',
+  },
+  invoiceButtonText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: '#6366F1',
+  },
+  invoiceModalContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: '90%',
+  },
+  invoicePreview: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  invoiceHeader: {
+    alignItems: 'center' as const,
+    paddingVertical: 24,
+    borderBottomWidth: 3,
+    borderBottomColor: '#6366F1',
+    marginBottom: 20,
+  },
+  invoiceCompany: {
+    fontSize: 28,
+    fontWeight: '700' as const,
+    color: '#111827',
+  },
+  invoiceAppName: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 4,
+  },
+  invoiceTitle: {
+    fontSize: 20,
+    fontWeight: '700' as const,
+    color: '#374151',
+    marginBottom: 16,
+  },
+  invoiceDetailsCard: {
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+  },
+  invoiceDetailRow: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  invoiceDetailLabel: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: '#6B7280',
+  },
+  invoiceDetailValue: {
+    fontSize: 14,
+    fontWeight: '500' as const,
+    color: '#111827',
+    textAlign: 'right' as const,
+    flex: 1,
+    marginLeft: 12,
+  },
+  invoiceTypeBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  invoiceTypeSale: {
+    backgroundColor: '#D1FAE5',
+  },
+  invoiceTypePurchase: {
+    backgroundColor: '#FEF3C7',
+  },
+  invoiceTypeBadgeText: {
+    fontSize: 12,
+    fontWeight: '700' as const,
+  },
+  invoiceTypeSaleText: {
+    color: '#059669',
+  },
+  invoiceTypePurchaseText: {
+    color: '#D97706',
+  },
+  invoiceItemsCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    overflow: 'hidden',
+    marginBottom: 20,
+  },
+  invoiceItemsHeader: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    backgroundColor: '#F3F4F6',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  invoiceItemsHeaderText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: '#374151',
+  },
+  invoiceItemRow: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  invoiceProductName: {
+    fontSize: 16,
+    fontWeight: '700' as const,
+    color: '#111827',
+  },
+  invoiceItemLabel: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  invoiceItemValue: {
+    fontSize: 14,
+    fontWeight: '500' as const,
+    color: '#111827',
+  },
+  invoiceTotalRow: {
+    backgroundColor: '#F9FAFB',
+    borderBottomWidth: 0,
+    marginTop: 8,
+  },
+  invoiceTotalLabel: {
+    fontSize: 16,
+    fontWeight: '700' as const,
+    color: '#374151',
+  },
+  invoiceTotalValue: {
+    fontSize: 20,
+    fontWeight: '700' as const,
+    color: '#111827',
+  },
+  invoiceProfitCard: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    backgroundColor: '#D1FAE5',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+  },
+  invoiceProfitLabel: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    color: '#059669',
+  },
+  invoiceProfitValue: {
+    fontSize: 20,
+    fontWeight: '700' as const,
+    color: '#059669',
+  },
+  invoiceNotesCard: {
+    backgroundColor: '#FFFBEB',
+    borderLeftWidth: 4,
+    borderLeftColor: '#F59E0B',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 20,
+  },
+  invoiceNotesLabel: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: '#92400E',
+    marginBottom: 8,
+  },
+  invoiceNotesText: {
+    fontSize: 14,
+    color: '#78350F',
+    fontStyle: 'italic' as const,
+  },
+  invoiceFooter: {
+    alignItems: 'center' as const,
+    paddingVertical: 24,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    marginTop: 20,
+  },
+  invoiceFooterText: {
+    fontSize: 11,
+    color: '#9CA3AF',
+    textAlign: 'center' as const,
+    marginBottom: 4,
+  },
+  printButton: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    backgroundColor: '#6366F1',
+    borderRadius: 12,
+    paddingVertical: 16,
+    marginHorizontal: 20,
+    marginBottom: 20,
+    gap: 8,
+  },
+  printButtonText: {
     fontSize: 16,
     fontWeight: '600' as const,
     color: '#FFFFFF',
