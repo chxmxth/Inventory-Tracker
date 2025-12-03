@@ -8,9 +8,10 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Modal,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Building2, Save } from 'lucide-react-native';
+import { Building2, Save, ShieldCheck, X, ChevronRight } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SETTINGS_KEY = '@inventory_settings';
@@ -24,6 +25,7 @@ export default function SettingsScreen() {
   const [companyName, setCompanyName] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
 
   useEffect(() => {
     loadSettings();
@@ -120,7 +122,120 @@ export default function SettingsScreen() {
             Your company name will replace the default branding on invoices. If no company name is provided, invoices will display &quot;Inventory Manager&quot; as the header.
           </Text>
         </View>
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <ShieldCheck size={20} color="#6366F1" />
+            <Text style={styles.sectionTitle}>Legal</Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.privacyButton}
+            onPress={() => setShowPrivacyPolicy(true)}
+          >
+            <Text style={styles.privacyButtonText}>Privacy Policy</Text>
+            <ChevronRight size={20} color="#6B7280" />
+          </TouchableOpacity>
+        </View>
       </ScrollView>
+
+      <Modal
+        visible={showPrivacyPolicy}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowPrivacyPolicy(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={[styles.modalHeader, { paddingTop: insets.top + 20 }]}>
+            <Text style={styles.modalTitle}>Privacy Policy</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowPrivacyPolicy(false)}
+            >
+              <X size={24} color="#6B7280" />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            style={styles.modalContent}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.modalContentContainer}
+          >
+            <Text style={styles.privacyText}>
+              <Text style={styles.privacyHeading}>Privacy Policy for Inventory Manager by CATronics{"\n\n"}</Text>
+              <Text style={styles.privacyLabel}>Last Updated: </Text>
+              <Text>December 3, 2025{"\n\n"}</Text>
+
+              <Text style={styles.privacyHeading}>Introduction{"\n\n"}</Text>
+              <Text>CATronics (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your privacy. This Privacy Policy explains how the Inventory Manager by CATronics mobile application (&quot;App&quot;) handles your information.{"\n\n"}</Text>
+
+              <Text style={styles.privacyHeading}>Information We Collect{"\n\n"}</Text>
+              <Text style={styles.privacySubheading}>Information Stored Locally on Your Device{"\n\n"}</Text>
+              <Text>The App stores the following information locally on your device using secure local storage:{"\n\n"}</Text>
+              <Text>• Product Information: Product names, categories, buying prices, selling prices, stock quantities, supplier names, and optional product images{"\n"}</Text>
+              <Text>• Transaction Records: Sales, purchases, and inventory removal records including dates, quantities, prices, and optional notes{"\n"}</Text>
+              <Text>• App Settings: Company name and other app configuration preferences{"\n\n"}</Text>
+
+              <Text style={styles.privacySubheading}>Information We Do NOT Collect{"\n\n"}</Text>
+              <Text>• We do NOT collect, transmit, or store any of your data on external servers{"\n"}</Text>
+              <Text>• We do NOT track your location{"\n"}</Text>
+              <Text>• We do NOT access your contacts, camera (except when you choose to add product images), or other sensitive device features without your explicit permission{"\n"}</Text>
+              <Text>• We do NOT use analytics or tracking services{"\n"}</Text>
+              <Text>• We do NOT sell, share, or rent your information to third parties{"\n\n"}</Text>
+
+              <Text style={styles.privacyHeading}>How We Use Your Information{"\n\n"}</Text>
+              <Text>All data entered into the App is stored locally on your device and is used solely to:{"\n\n"}</Text>
+              <Text>• Manage your product inventory{"\n"}</Text>
+              <Text>• Track sales, purchases, and inventory changes{"\n"}</Text>
+              <Text>• Generate reports and invoices{"\n"}</Text>
+              <Text>• Calculate profits and stock values{"\n"}</Text>
+              <Text>• Display dashboard summaries{"\n\n"}</Text>
+
+              <Text style={styles.privacyHeading}>Data Storage and Security{"\n\n"}</Text>
+              <Text>• All data is stored locally on your device using industry-standard encryption through AsyncStorage{"\n"}</Text>
+              <Text>• Your data remains on your device and is not transmitted to any external servers{"\n"}</Text>
+              <Text>• You have full control over your data and can delete the App at any time to remove all stored information{"\n"}</Text>
+              <Text>• We recommend that you use your device&apos;s built-in security features (passcode, biometric authentication) to protect access to your device and the App{"\n\n"}</Text>
+
+              <Text style={styles.privacyHeading}>Data Sharing and Third Parties{"\n\n"}</Text>
+              <Text>• We do NOT share your data with any third parties{"\n"}</Text>
+              <Text>• The App operates entirely offline and does not require internet connectivity to function{"\n"}</Text>
+              <Text>• No third-party analytics, advertising, or tracking services are used in the App{"\n\n"}</Text>
+
+              <Text style={styles.privacyHeading}>Your Rights and Choices{"\n\n"}</Text>
+              <Text>You have the right to:{"\n\n"}</Text>
+              <Text>• Access all data stored in the App at any time{"\n"}</Text>
+              <Text>• Modify or delete any products, transactions, or settings{"\n"}</Text>
+              <Text>• Permanently delete all data by uninstalling the App from your device{"\n"}</Text>
+              <Text>• Export data through the invoice/report generation features{"\n\n"}</Text>
+
+              <Text style={styles.privacyHeading}>Children&apos;s Privacy{"\n\n"}</Text>
+              <Text>The App does not specifically target children under the age of 13. We do not knowingly collect personal information from children under 13. The App is designed for business inventory management purposes.{"\n\n"}</Text>
+
+              <Text style={styles.privacyHeading}>Changes to This Privacy Policy{"\n\n"}</Text>
+              <Text>We may update this Privacy Policy from time to time. Any changes will be reflected in the &quot;Last Updated&quot; date at the top of this policy. We encourage you to review this Privacy Policy periodically for any updates.{"\n\n"}</Text>
+
+              <Text style={styles.privacyHeading}>Data Retention{"\n\n"}</Text>
+              <Text>Your data is retained locally on your device for as long as the App is installed. Uninstalling the App will permanently delete all locally stored data from your device.{"\n\n"}</Text>
+
+              <Text style={styles.privacyHeading}>International Users{"\n\n"}</Text>
+              <Text>Since all data is stored locally on your device, this App complies with data protection regulations including GDPR (General Data Protection Regulation) and CCPA (California Consumer Privacy Act) by design, as no personal data is collected, transmitted, or stored on external servers.{"\n\n"}</Text>
+
+              <Text style={styles.privacyHeading}>Permissions{"\n\n"}</Text>
+              <Text>The App may request the following permissions:{"\n\n"}</Text>
+              <Text>• Storage (READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE): To save and retrieve locally stored inventory data and optionally store product images{"\n"}</Text>
+              <Text>• Internet (INTERNET): For potential future updates and features (currently the app operates fully offline){"\n\n"}</Text>
+              <Text>These permissions are used solely for the functionality described and no data is transmitted off your device.{"\n\n"}</Text>
+
+              <Text style={styles.privacyHeading}>Consent{"\n\n"}</Text>
+              <Text>By using the Inventory Manager by CATronics App, you consent to this Privacy Policy and agree to its terms.{"\n\n"}</Text>
+
+              <Text style={styles.privacyImportant}>Important Note: </Text>
+              <Text>This is an offline-first application. All your business data, including products, transactions, pricing, and financial information, remains private and secure on your device. We believe your business data belongs to you and should stay under your control.</Text>
+            </Text>
+          </ScrollView>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -234,5 +349,74 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#6366F1',
     lineHeight: 18,
+  },
+  privacyButton: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'space-between' as const,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  privacyButtonText: {
+    fontSize: 16,
+    color: '#111827',
+    fontWeight: '500' as const,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  modalHeader: {
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'space-between' as const,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: '700' as const,
+    color: '#111827',
+  },
+  closeButton: {
+    padding: 4,
+  },
+  modalContent: {
+    flex: 1,
+  },
+  modalContentContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 24,
+    paddingBottom: 40,
+  },
+  privacyText: {
+    fontSize: 15,
+    lineHeight: 24,
+    color: '#374151',
+  },
+  privacyHeading: {
+    fontSize: 20,
+    fontWeight: '700' as const,
+    color: '#111827',
+  },
+  privacySubheading: {
+    fontSize: 17,
+    fontWeight: '600' as const,
+    color: '#111827',
+  },
+  privacyLabel: {
+    fontWeight: '600' as const,
+    color: '#111827',
+  },
+  privacyImportant: {
+    fontWeight: '700' as const,
+    color: '#111827',
   },
 });
