@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   StyleSheet,
   Text,
@@ -18,41 +18,15 @@ import {
   Download,
   Calendar,
 } from 'lucide-react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useInventory } from '@/contexts/InventoryContext';
 import type { DateRange } from '@/types/inventory';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import { getCurrencySymbol } from '@/constants/currency';
-
-const SETTINGS_KEY = '@inventory_settings';
-
-interface Settings {
-  companyName: string;
-  currency: string;
-}
 
 export default function ReportsScreen() {
   const insets = useSafeAreaInsets();
-  const { getReportData, isLoading } = useInventory();
+  const { getReportData, isLoading, currencySymbol } = useInventory();
   const [selectedRange, setSelectedRange] = useState<DateRange>('month');
-  const [currencySymbol, setCurrencySymbol] = useState('Rs.');
-
-  useEffect(() => {
-    loadSettings();
-  }, []);
-
-  const loadSettings = async () => {
-    try {
-      const settingsData = await AsyncStorage.getItem(SETTINGS_KEY);
-      if (settingsData) {
-        const settings: Settings = JSON.parse(settingsData);
-        setCurrencySymbol(getCurrencySymbol(settings.currency || 'LKR'));
-      }
-    } catch (error) {
-      console.error('Error loading settings:', error);
-    }
-  };
 
   const reportData = useMemo(() => {
     return getReportData(selectedRange);

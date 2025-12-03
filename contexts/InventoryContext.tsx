@@ -3,21 +3,32 @@ import createContextHook from '@nkzw/create-context-hook';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { Product, Transaction, DashboardSummary, DateRange, ReportData } from '@/types/inventory';
+import { getCurrencySymbol } from '@/constants/currency';
 
 const PRODUCTS_KEY = '@inventory_products';
 const TRANSACTIONS_KEY = '@inventory_transactions';
+const SETTINGS_KEY = '@inventory_settings';
 const LOW_STOCK_THRESHOLD = 10;
+
+interface Settings {
+  companyName: string;
+  currency: string;
+}
 
 export const [InventoryProvider, useInventory] = createContextHook(() => {
   const [products, setProducts] = useState<Product[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currency, setCurrency] = useState('LKR');
+  const [currencySymbol, setCurrencySymbol] = useState('Rs.');
+  const [companyName, setCompanyName] = useState('');
 
   const loadData = useCallback(async () => {
     try {
-      const [productsData, transactionsData] = await Promise.all([
+      const [productsData, transactionsData, settingsData] = await Promise.all([
         AsyncStorage.getItem(PRODUCTS_KEY),
         AsyncStorage.getItem(TRANSACTIONS_KEY),
+        AsyncStorage.getItem(SETTINGS_KEY),
       ]);
 
       if (productsData) {
@@ -25,6 +36,12 @@ export const [InventoryProvider, useInventory] = createContextHook(() => {
       }
       if (transactionsData) {
         setTransactions(JSON.parse(transactionsData));
+      }
+      if (settingsData) {
+        const settings: Settings = JSON.parse(settingsData);
+        setCurrency(settings.currency || 'LKR');
+        setCurrencySymbol(getCurrencySymbol(settings.currency || 'LKR'));
+        setCompanyName(settings.companyName || '');
       }
     } catch (error) {
       console.error('Error loading data:', error);
@@ -253,10 +270,25 @@ export const [InventoryProvider, useInventory] = createContextHook(() => {
     };
   }, [transactions]);
 
+  const updateSettings = useCallback(async (newSettings: Settings) => {
+    try {
+      await AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(newSettings));
+      setCurrency(newSettings.currency);
+      setCurrencySymbol(getCurrencySymbol(newSettings.currency));
+      setCompanyName(newSettings.companyName);
+    } catch (error) {
+      console.error('Error updating settings:', error);
+      throw error;
+    }
+  }, []);
+
   return useMemo(() => ({
     products,
     transactions,
     isLoading,
+    currency,
+    currencySymbol,
+    companyName,
     addProduct,
     updateProduct,
     deleteProduct,
@@ -264,5 +296,6 @@ export const [InventoryProvider, useInventory] = createContextHook(() => {
     removeItem,
     getDashboardSummary,
     getReportData,
-  }), [products, transactions, isLoading, addProduct, updateProduct, deleteProduct, addTransaction, removeItem, getDashboardSummary, getReportData]);
+    updateSettings,
+  }), [products, transactions, isLoading, currency, currencySymbol, companyName, addProduct, updateProduct, deleteProduct, addTransaction, removeItem, getDashboardSummary, getReportData, updateSettings]);
 });

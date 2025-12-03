@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,43 +12,17 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Building2, Save, ShieldCheck, X, ChevronRight } from 'lucide-react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getCurrencySymbol } from '@/constants/currency';
-
-const SETTINGS_KEY = '@inventory_settings';
-
-interface Settings {
-  companyName: string;
-  currency: string;
-}
+import { useInventory } from '@/contexts/InventoryContext';
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
-  const [companyName, setCompanyName] = useState('');
-  const [currency, setCurrency] = useState('USD');
-  const [isLoading, setIsLoading] = useState(true);
+  const { currency: savedCurrency, companyName: savedCompanyName, isLoading, updateSettings } = useInventory();
+  const [companyName, setCompanyName] = useState(savedCompanyName);
+  const [currency, setCurrency] = useState(savedCurrency);
   const [isSaving, setIsSaving] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
-
-  useEffect(() => {
-    loadSettings();
-  }, []);
-
-  const loadSettings = async () => {
-    try {
-      const settingsData = await AsyncStorage.getItem(SETTINGS_KEY);
-      if (settingsData) {
-        const settings: Settings = JSON.parse(settingsData);
-        setCompanyName(settings.companyName || '');
-        setCurrency(settings.currency || 'USD');
-      }
-    } catch (error) {
-      console.error('Error loading settings:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSave = async () => {
     if (!companyName.trim()) {
@@ -58,11 +32,10 @@ export default function SettingsScreen() {
 
     setIsSaving(true);
     try {
-      const settings: Settings = {
+      await updateSettings({
         companyName: companyName.trim(),
         currency,
-      };
-      await AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+      });
       Alert.alert('Success', 'Settings saved successfully');
     } catch (error) {
       console.error('Error saving settings:', error);
@@ -179,15 +152,45 @@ export default function SettingsScreen() {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.currencyListContainer}
           >
-            {['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR', 'MXN', 'BRL', 'ZAR', 'KRW', 'SGD', 'HKD', 'NZD', 'SEK', 'NOK', 'DKK', 'PLN', 'THB', 'IDR', 'MYR', 'PHP', 'AED', 'SAR', 'TRY', 'RUB', 'LKR'].map((curr) => (
+            {[
+              { code: 'USD', name: 'US Dollar' },
+              { code: 'EUR', name: 'Euro' },
+              { code: 'GBP', name: 'British Pound' },
+              { code: 'JPY', name: 'Japanese Yen' },
+              { code: 'AUD', name: 'Australian Dollar' },
+              { code: 'CAD', name: 'Canadian Dollar' },
+              { code: 'CHF', name: 'Swiss Franc' },
+              { code: 'CNY', name: 'Chinese Yuan' },
+              { code: 'INR', name: 'Indian Rupee' },
+              { code: 'MXN', name: 'Mexican Peso' },
+              { code: 'BRL', name: 'Brazilian Real' },
+              { code: 'ZAR', name: 'South African Rand' },
+              { code: 'KRW', name: 'South Korean Won' },
+              { code: 'SGD', name: 'Singapore Dollar' },
+              { code: 'HKD', name: 'Hong Kong Dollar' },
+              { code: 'NZD', name: 'New Zealand Dollar' },
+              { code: 'SEK', name: 'Swedish Krona' },
+              { code: 'NOK', name: 'Norwegian Krone' },
+              { code: 'DKK', name: 'Danish Krone' },
+              { code: 'PLN', name: 'Polish Zloty' },
+              { code: 'THB', name: 'Thai Baht' },
+              { code: 'IDR', name: 'Indonesian Rupiah' },
+              { code: 'MYR', name: 'Malaysian Ringgit' },
+              { code: 'PHP', name: 'Philippine Peso' },
+              { code: 'AED', name: 'UAE Dirham' },
+              { code: 'SAR', name: 'Saudi Riyal' },
+              { code: 'TRY', name: 'Turkish Lira' },
+              { code: 'RUB', name: 'Russian Ruble' },
+              { code: 'LKR', name: 'Sri Lankan Rupee' },
+            ].map((curr) => (
               <TouchableOpacity
-                key={curr}
+                key={curr.code}
                 style={[
                   styles.currencyOption,
-                  currency === curr && styles.currencyOptionSelected,
+                  currency === curr.code && styles.currencyOptionSelected,
                 ]}
                 onPress={() => {
-                  setCurrency(curr);
+                  setCurrency(curr.code);
                   setShowCurrencyPicker(false);
                 }}
               >
@@ -196,22 +199,25 @@ export default function SettingsScreen() {
                     <Text
                       style={[
                         styles.currencySymbol,
-                        currency === curr && styles.currencySymbolSelected,
+                        currency === curr.code && styles.currencySymbolSelected,
                       ]}
                     >
-                      {getCurrencySymbol(curr)}
+                      {getCurrencySymbol(curr.code)}
                     </Text>
                   </View>
-                  <Text
-                    style={[
-                      styles.currencyOptionText,
-                      currency === curr && styles.currencyOptionTextSelected,
-                    ]}
-                  >
-                    {curr}
-                  </Text>
+                  <View style={styles.currencyNameContainer}>
+                    <Text
+                      style={[
+                        styles.currencyCode,
+                        currency === curr.code && styles.currencyCodeSelected,
+                      ]}
+                    >
+                      {curr.code}
+                    </Text>
+                    <Text style={styles.currencyName}>{curr.name}</Text>
+                  </View>
                 </View>
-                {currency === curr && (
+                {currency === curr.code && (
                   <View style={styles.selectedIndicator} />
                 )}
               </TouchableOpacity>
@@ -570,5 +576,21 @@ const styles = StyleSheet.create({
   },
   currencySymbolSelected: {
     color: '#6366F1',
+  },
+  currencyNameContainer: {
+    flex: 1,
+  },
+  currencyCode: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    color: '#111827',
+    marginBottom: 2,
+  },
+  currencyCodeSelected: {
+    color: '#6366F1',
+  },
+  currencyName: {
+    fontSize: 13,
+    color: '#6B7280',
   },
 });

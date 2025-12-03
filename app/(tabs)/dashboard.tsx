@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { Package, Plus, TrendingUp } from 'lucide-react-native';
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -10,40 +10,14 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useInventory } from '@/contexts/InventoryContext';
-import { getCurrencySymbol } from '@/constants/currency';
-
-const SETTINGS_KEY = '@inventory_settings';
-
-interface Settings {
-  companyName: string;
-  currency: string;
-}
 
 export default function DashboardScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { getDashboardSummary, transactions, isLoading } = useInventory();
+  const { getDashboardSummary, transactions, isLoading, currencySymbol } = useInventory();
   const summary = useMemo(() => getDashboardSummary(), [getDashboardSummary]);
-  const [currencySymbol, setCurrencySymbol] = useState('Rs.');
-
-  useEffect(() => {
-    loadSettings();
-  }, []);
-
-  const loadSettings = async () => {
-    try {
-      const settingsData = await AsyncStorage.getItem(SETTINGS_KEY);
-      if (settingsData) {
-        const settings: Settings = JSON.parse(settingsData);
-        setCurrencySymbol(getCurrencySymbol(settings.currency || 'LKR'));
-      }
-    } catch (error) {
-      console.error('Error loading settings:', error);
-    }
-  };
 
   const recentTransactions = useMemo(
     () => transactions.slice(0, 5),
