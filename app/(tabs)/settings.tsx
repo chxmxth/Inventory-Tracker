@@ -195,7 +195,14 @@ export default function SettingsScreen() {
                 }}
               >
                 <View style={styles.currencyOptionContent}>
-                  <View style={styles.currencySymbolContainer}>
+                  <View
+                    style={[
+                      styles.currencySymbolContainer,
+                      currency === curr.code && {
+                        backgroundColor: '#FFFFFF',
+                      },
+                    ]}
+                  >
                     <Text
                       style={[
                         styles.currencySymbol,
@@ -214,11 +221,20 @@ export default function SettingsScreen() {
                     >
                       {curr.code}
                     </Text>
-                    <Text style={styles.currencyName}>{curr.name}</Text>
+                    <Text
+                      style={[
+                        styles.currencyName,
+                        currency === curr.code && styles.currencyNameSelected,
+                      ]}
+                    >
+                      {curr.name}
+                    </Text>
                   </View>
                 </View>
                 {currency === curr.code && (
-                  <View style={styles.selectedIndicator} />
+                  <View style={styles.selectedIndicator}>
+                    <View style={styles.selectedIndicatorDot} />
+                  </View>
                 )}
               </TouchableOpacity>
             ))}
@@ -524,25 +540,36 @@ const styles = StyleSheet.create({
     fontWeight: '500' as const,
   },
   currencyListContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     paddingBottom: 40,
   },
   currencyOption: {
     flexDirection: 'row' as const,
     alignItems: 'center' as const,
     justifyContent: 'space-between' as const,
-    backgroundColor: '#F9FAFB',
-    borderWidth: 1,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
     borderColor: '#E5E7EB',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    marginBottom: 8,
+    borderRadius: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 18,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 3,
+    elevation: 1,
   },
   currencyOptionSelected: {
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#6366F1',
     borderColor: '#6366F1',
+    borderWidth: 2,
+    shadowColor: '#6366F1',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   currencyOptionContent: {
     flexDirection: 'row' as const,
@@ -559,38 +586,54 @@ const styles = StyleSheet.create({
     fontWeight: '600' as const,
   },
   selectedIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
+  selectedIndicatorDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: '#6366F1',
   },
   currencySymbolContainer: {
-    width: 24,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#F3F4F6',
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
   },
   currencySymbol: {
-    fontSize: 18,
-    fontWeight: '600' as const,
-    color: '#6B7280',
+    fontSize: 22,
+    fontWeight: '700' as const,
+    color: '#374151',
   },
   currencySymbolSelected: {
-    color: '#6366F1',
+    color: '#FFFFFF',
   },
   currencyNameContainer: {
     flex: 1,
   },
   currencyCode: {
-    fontSize: 16,
-    fontWeight: '600' as const,
+    fontSize: 17,
+    fontWeight: '700' as const,
     color: '#111827',
-    marginBottom: 2,
+    marginBottom: 3,
+    letterSpacing: 0.3,
   },
   currencyCodeSelected: {
-    color: '#6366F1',
+    color: '#FFFFFF',
   },
   currencyName: {
-    fontSize: 13,
+    fontSize: 14,
     color: '#6B7280',
+    letterSpacing: 0.2,
+  },
+  currencyNameSelected: {
+    color: '#E0E7FF',
   },
 });
