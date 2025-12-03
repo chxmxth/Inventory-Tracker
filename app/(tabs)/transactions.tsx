@@ -44,6 +44,12 @@ export default function TransactionsScreen() {
     loadSettings();
   }, []);
 
+  useEffect(() => {
+    if (showInvoiceModal) {
+      loadSettings();
+    }
+  }, [showInvoiceModal]);
+
   const loadSettings = async () => {
     try {
       const settingsData = await AsyncStorage.getItem(SETTINGS_KEY);
@@ -274,7 +280,7 @@ export default function TransactionsScreen() {
         </head>
         <body>
           <div class="header">
-            <h1 class="company-name">${companyName}</h1>
+            <h1 class="company-name">${companyName || 'Inventory Manager'}</h1>
           </div>
 
           <h2 class="invoice-title">
@@ -677,7 +683,7 @@ export default function TransactionsScreen() {
             {selectedTransaction && (
               <ScrollView style={styles.invoicePreview} showsVerticalScrollIndicator={false}>
                 <View style={styles.invoiceHeader}>
-                  <Text style={styles.invoiceCompany}>{companyName}</Text>
+                  <Text style={styles.invoiceCompany}>{companyName || 'Inventory Manager'}</Text>
                 </View>
 
                 <Text style={styles.invoiceTitle}>
