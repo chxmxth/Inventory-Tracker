@@ -271,11 +271,6 @@ export default function SettingsScreen() {
                     </Text>
                   </View>
                 </View>
-                {currency === curr.code && (
-                  <View style={styles.selectedIndicator}>
-                    <View style={styles.selectedIndicatorDot} />
-                  </View>
-                )}
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -653,20 +648,7 @@ const styles = StyleSheet.create({
     color: '#6366F1',
     fontWeight: '600' as const,
   },
-  selectedIndicator: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
-  },
-  selectedIndicatorDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#6366F1',
-  },
+
   currencySymbolContainer: {
     width: 48,
     height: 48,
