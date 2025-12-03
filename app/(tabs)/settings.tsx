@@ -87,7 +87,49 @@ export default function SettingsScreen() {
             style={styles.currencySelector}
             onPress={() => setShowCurrencyPicker(true)}
           >
-            <Text style={styles.currencySelectorText}>{currency}</Text>
+            <View style={styles.currencySelectorContent}>
+              <View style={styles.selectedCurrencySymbolContainer}>
+                <Text style={styles.selectedCurrencySymbol}>
+                  {getCurrencySymbol(currency)}
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.selectedCurrencyCode}>{currency}</Text>
+                <Text style={styles.selectedCurrencyName}>
+                  {[
+                    { code: 'USD', name: 'US Dollar' },
+                    { code: 'EUR', name: 'Euro' },
+                    { code: 'GBP', name: 'British Pound' },
+                    { code: 'JPY', name: 'Japanese Yen' },
+                    { code: 'AUD', name: 'Australian Dollar' },
+                    { code: 'CAD', name: 'Canadian Dollar' },
+                    { code: 'CHF', name: 'Swiss Franc' },
+                    { code: 'CNY', name: 'Chinese Yuan' },
+                    { code: 'INR', name: 'Indian Rupee' },
+                    { code: 'MXN', name: 'Mexican Peso' },
+                    { code: 'BRL', name: 'Brazilian Real' },
+                    { code: 'ZAR', name: 'South African Rand' },
+                    { code: 'KRW', name: 'South Korean Won' },
+                    { code: 'SGD', name: 'Singapore Dollar' },
+                    { code: 'HKD', name: 'Hong Kong Dollar' },
+                    { code: 'NZD', name: 'New Zealand Dollar' },
+                    { code: 'SEK', name: 'Swedish Krona' },
+                    { code: 'NOK', name: 'Norwegian Krone' },
+                    { code: 'DKK', name: 'Danish Krone' },
+                    { code: 'PLN', name: 'Polish Zloty' },
+                    { code: 'THB', name: 'Thai Baht' },
+                    { code: 'IDR', name: 'Indonesian Rupiah' },
+                    { code: 'MYR', name: 'Malaysian Ringgit' },
+                    { code: 'PHP', name: 'Philippine Peso' },
+                    { code: 'AED', name: 'UAE Dirham' },
+                    { code: 'SAR', name: 'Saudi Riyal' },
+                    { code: 'TRY', name: 'Turkish Lira' },
+                    { code: 'RUB', name: 'Russian Ruble' },
+                    { code: 'LKR', name: 'Sri Lankan Rupee' },
+                  ].find((c) => c.code === currency)?.name || currency}
+                </Text>
+              </View>
+            </View>
             <ChevronRight size={20} color="#6B7280" />
           </TouchableOpacity>
 
@@ -538,6 +580,34 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#111827',
     fontWeight: '500' as const,
+  },
+  currencySelectorContent: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    gap: 12,
+  },
+  selectedCurrencySymbolContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#EEF2FF',
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
+  selectedCurrencySymbol: {
+    fontSize: 20,
+    fontWeight: '700' as const,
+    color: '#6366F1',
+  },
+  selectedCurrencyCode: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    color: '#111827',
+    marginBottom: 2,
+  },
+  selectedCurrencyName: {
+    fontSize: 13,
+    color: '#6B7280',
   },
   currencyListContainer: {
     paddingHorizontal: 16,
