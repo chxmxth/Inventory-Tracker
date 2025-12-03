@@ -116,13 +116,6 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Note</Text>
-          <Text style={styles.infoText}>
-            Your company name will replace the default branding on invoices. If no company name is provided, invoices will display &quot;Inventory Manager&quot; as the header.
-          </Text>
-        </View>
-
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <ShieldCheck size={20} color="#6366F1" />
@@ -136,6 +129,13 @@ export default function SettingsScreen() {
             <Text style={styles.privacyButtonText}>Privacy Policy</Text>
             <ChevronRight size={20} color="#6B7280" />
           </TouchableOpacity>
+        </View>
+
+        <View style={styles.infoCard}>
+          <Text style={styles.infoTitle}>Note</Text>
+          <Text style={styles.infoText}>
+            Your company name will replace the default branding on invoices. If no company name is provided, invoices will display &quot;Inventory Manager&quot; as the header.
+          </Text>
         </View>
       </ScrollView>
 
