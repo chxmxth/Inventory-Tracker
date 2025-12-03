@@ -20,7 +20,7 @@ import {
 } from 'lucide-react-native';
 import { useInventory } from '@/contexts/InventoryContext';
 import type { DateRange } from '@/types/inventory';
-import * as FileSystem from 'expo-file-system';
+import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
 export default function ReportsScreen() {
@@ -77,15 +77,13 @@ export default function ReportsScreen() {
         URL.revokeObjectURL(url);
         Alert.alert('Success', 'Report exported successfully!');
       } else {
-        const fileUri = `${FileSystem.documentDirectory}${fileName}`;
-        await FileSystem.writeAsStringAsync(fileUri, csvContent, {
-          encoding: FileSystem.EncodingType.UTF8,
-        });
+        const file = new File(Paths.cache, fileName);
+        file.write(csvContent);
 
         if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(fileUri);
+          await Sharing.shareAsync(file.uri);
         } else {
-          Alert.alert('Success', `Report saved to ${fileUri}`);
+          Alert.alert('Success', `Report saved to ${file.uri}`);
         }
       }
     } catch (error) {
@@ -186,18 +184,16 @@ export default function ReportsScreen() {
           }, 250);
         }
       } else {
-        const fileUri = `${FileSystem.documentDirectory}${fileName}`;
-        await FileSystem.writeAsStringAsync(fileUri, htmlContent, {
-          encoding: FileSystem.EncodingType.UTF8,
-        });
+        const file = new File(Paths.cache, fileName);
+        file.write(htmlContent);
 
         if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(fileUri, {
+          await Sharing.shareAsync(file.uri, {
             mimeType: 'text/html',
             dialogTitle: 'Export Report as PDF',
           });
         } else {
-          Alert.alert('Success', `Report saved to ${fileUri}`);
+          Alert.alert('Success', `Report saved to ${file.uri}`);
         }
       }
     } catch (error) {
