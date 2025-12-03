@@ -18,11 +18,13 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { useInventory } from '@/contexts/InventoryContext';
 import type { Transaction } from '@/types/inventory';
+import { getCurrencySymbol } from '@/constants/currency';
 
 const SETTINGS_KEY = '@inventory_settings';
 
 interface Settings {
   companyName: string;
+  currency: string;
 }
 
 export default function TransactionsScreen() {
@@ -39,6 +41,7 @@ export default function TransactionsScreen() {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [companyName, setCompanyName] = useState('Inventory Manager');
+  const [currencySymbol, setCurrencySymbol] = useState('Rs.');
 
   useEffect(() => {
     loadSettings();
@@ -58,6 +61,7 @@ export default function TransactionsScreen() {
         if (settings.companyName) {
           setCompanyName(settings.companyName);
         }
+        setCurrencySymbol(getCurrencySymbol(settings.currency || 'LKR'));
       }
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -117,7 +121,7 @@ export default function TransactionsScreen() {
   };
 
   const formatCurrency = (amount: number) => {
-    return `Rs. ${amount.toLocaleString()}`;
+    return `${currencySymbol} ${amount.toLocaleString()}`;
   };
 
   const generateInvoiceHTML = (transaction: Transaction) => {

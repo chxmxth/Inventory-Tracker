@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { Package, Plus, TrendingUp } from 'lucide-react-native';
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -10,14 +10,40 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useInventory } from '@/contexts/InventoryContext';
+import { getCurrencySymbol } from '@/constants/currency';
+
+const SETTINGS_KEY = '@inventory_settings';
+
+interface Settings {
+  companyName: string;
+  currency: string;
+}
 
 export default function DashboardScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { getDashboardSummary, transactions, isLoading } = useInventory();
   const summary = useMemo(() => getDashboardSummary(), [getDashboardSummary]);
+  const [currencySymbol, setCurrencySymbol] = useState('Rs.');
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const loadSettings = async () => {
+    try {
+      const settingsData = await AsyncStorage.getItem(SETTINGS_KEY);
+      if (settingsData) {
+        const settings: Settings = JSON.parse(settingsData);
+        setCurrencySymbol(getCurrencySymbol(settings.currency || 'LKR'));
+      }
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    }
+  };
 
   const recentTransactions = useMemo(
     () => transactions.slice(0, 5),
@@ -64,7 +90,7 @@ export default function DashboardScreen() {
               <TrendingUp size={24} color="#fff" />
             </View>
             <Text style={styles.metricValue}>
-              Rs. {summary.stockValue.toLocaleString()}
+              {currencySymbol} {summary.stockValue.toLocaleString()}
             </Text>
             <Text style={styles.metricLabel}>Stock Value</Text>
           </View>
@@ -73,21 +99,21 @@ export default function DashboardScreen() {
         <View style={styles.profitCard}>
           <Text style={styles.profitTitle}>This Month</Text>
           <Text style={styles.profitAmount}>
-            Rs. {summary.monthlyProfit.toLocaleString()}
+            {currencySymbol} {summary.monthlyProfit.toLocaleString()}
           </Text>
           <Text style={styles.profitLabel}>Net Profit</Text>
           <View style={styles.profitDetails}>
             <View style={styles.profitDetailItem}>
               <Text style={styles.profitDetailLabel}>Sales</Text>
               <Text style={styles.profitDetailValue}>
-                Rs. {summary.monthlySales.toLocaleString()}
+                {currencySymbol} {summary.monthlySales.toLocaleString()}
               </Text>
             </View>
             <View style={styles.profitDetailDivider} />
             <View style={styles.profitDetailItem}>
               <Text style={styles.profitDetailLabel}>Purchases</Text>
               <Text style={styles.profitDetailValue}>
-                Rs. {summary.monthlyPurchases.toLocaleString()}
+                {currencySymbol} {summary.monthlyPurchases.toLocaleString()}
               </Text>
             </View>
           </View>
@@ -139,7 +165,7 @@ export default function DashboardScreen() {
                       : styles.transactionAmountNegative,
                   ]}
                 >
-                  {transaction.type === 'sale' ? '+' : '-'}Rs.{' '}
+                  {transaction.type === 'sale' ? '+' : '-'}{currencySymbol}{' '}
                   {transaction.totalAmount.toLocaleString()}
                 </Text>
               </View>

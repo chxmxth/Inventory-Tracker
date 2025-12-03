@@ -1,0 +1,35 @@
+export const CURRENCY_SYMBOLS: Record<string, string> = {
+  USD: '$',
+  EUR: '€',
+  GBP: '£',
+  JPY: '¥',
+  AUD: 'A$',
+  CAD: 'C$',
+  CHF: 'CHF',
+  CNY: '¥',
+  INR: '₹',
+  MXN: '$',
+  BRL: 'R$',
+  ZAR: 'R',
+  KRW: '₩',
+  SGD: 'S$',
+  HKD: 'HK$',
+  NZD: 'NZ$',
+  SEK: 'kr',
+  NOK: 'kr',
+  DKK: 'kr',
+  PLN: 'zł',
+  THB: '฿',
+  IDR: 'Rp',
+  MYR: 'RM',
+  PHP: '₱',
+  AED: 'د.إ',
+  SAR: '﷼',
+  TRY: '₺',
+  RUB: '₽',
+  LKR: 'Rs.',
+};
+
+export function getCurrencySymbol(currencyCode: string): string {
+  return CURRENCY_SYMBOLS[currencyCode] || currencyCode;
+}
