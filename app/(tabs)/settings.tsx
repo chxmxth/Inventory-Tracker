@@ -11,21 +11,24 @@ import {
   Modal,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Building2, Save, ShieldCheck, X, ChevronRight } from 'lucide-react-native';
+import { Building2, Save, ShieldCheck, X, ChevronRight, DollarSign } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SETTINGS_KEY = '@inventory_settings';
 
 interface Settings {
   companyName: string;
+  currency: string;
 }
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const [companyName, setCompanyName] = useState('');
+  const [currency, setCurrency] = useState('USD');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
+  const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
 
   useEffect(() => {
     loadSettings();
@@ -37,6 +40,7 @@ export default function SettingsScreen() {
       if (settingsData) {
         const settings: Settings = JSON.parse(settingsData);
         setCompanyName(settings.companyName || '');
+        setCurrency(settings.currency || 'USD');
       }
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -55,6 +59,7 @@ export default function SettingsScreen() {
     try {
       const settings: Settings = {
         companyName: companyName.trim(),
+        currency,
       };
       await AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
       Alert.alert('Success', 'Settings saved successfully');
@@ -100,6 +105,18 @@ export default function SettingsScreen() {
             placeholderTextColor="#9CA3AF"
           />
 
+          <Text style={styles.label}>Currency</Text>
+          <Text style={styles.description}>
+            Select the currency for your transactions
+          </Text>
+          <TouchableOpacity
+            style={styles.currencySelector}
+            onPress={() => setShowCurrencyPicker(true)}
+          >
+            <Text style={styles.currencySelectorText}>{currency}</Text>
+            <ChevronRight size={20} color="#6B7280" />
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={[styles.saveButton, isSaving && styles.saveButtonDisabled]}
             onPress={handleSave}
@@ -138,6 +155,63 @@ export default function SettingsScreen() {
           </Text>
         </View>
       </ScrollView>
+
+      <Modal
+        visible={showCurrencyPicker}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowCurrencyPicker(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={[styles.modalHeader, { paddingTop: insets.top + 20 }]}>
+            <Text style={styles.modalTitle}>Select Currency</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowCurrencyPicker(false)}
+            >
+              <X size={24} color="#6B7280" />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            style={styles.modalContent}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.currencyListContainer}
+          >
+            {['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR', 'MXN', 'BRL', 'ZAR', 'KRW', 'SGD', 'HKD', 'NZD', 'SEK', 'NOK', 'DKK', 'PLN', 'THB', 'IDR', 'MYR', 'PHP', 'AED', 'SAR', 'TRY', 'RUB'].map((curr) => (
+              <TouchableOpacity
+                key={curr}
+                style={[
+                  styles.currencyOption,
+                  currency === curr && styles.currencyOptionSelected,
+                ]}
+                onPress={() => {
+                  setCurrency(curr);
+                  setShowCurrencyPicker(false);
+                }}
+              >
+                <View style={styles.currencyOptionContent}>
+                  <DollarSign
+                    size={20}
+                    color={currency === curr ? '#6366F1' : '#6B7280'}
+                  />
+                  <Text
+                    style={[
+                      styles.currencyOptionText,
+                      currency === curr && styles.currencyOptionTextSelected,
+                    ]}
+                  >
+                    {curr}
+                  </Text>
+                </View>
+                {currency === curr && (
+                  <View style={styles.selectedIndicator} />
+                )}
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      </Modal>
 
       <Modal
         visible={showPrivacyPolicy}
@@ -418,5 +492,63 @@ const styles = StyleSheet.create({
   privacyImportant: {
     fontWeight: '700' as const,
     color: '#111827',
+  },
+  currencySelector: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'space-between' as const,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 20,
+  },
+  currencySelectorText: {
+    fontSize: 16,
+    color: '#111827',
+    fontWeight: '500' as const,
+  },
+  currencyListContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    paddingBottom: 40,
+  },
+  currencyOption: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'space-between' as const,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    marginBottom: 8,
+  },
+  currencyOptionSelected: {
+    backgroundColor: '#EEF2FF',
+    borderColor: '#6366F1',
+  },
+  currencyOptionContent: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    gap: 12,
+  },
+  currencyOptionText: {
+    fontSize: 16,
+    color: '#374151',
+    fontWeight: '500' as const,
+  },
+  currencyOptionTextSelected: {
+    color: '#6366F1',
+    fontWeight: '600' as const,
+  },
+  selectedIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#6366F1',
   },
 });
