@@ -18,8 +18,8 @@
       "bundleIdentifier": "com.catronics.inventorymanagement",
       "buildNumber": "2",
       "infoPlist": {
-        "UIRequiresFullScreen": false
-      }
+    "UIRequiresFullScreen": false
+        }
     },
     "android": {
       "adaptiveIcon": {
