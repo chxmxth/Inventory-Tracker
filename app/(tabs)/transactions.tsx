@@ -1007,6 +1007,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end' as const,
   },
   modalContent: {
+    flex: 1,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
@@ -1145,6 +1146,7 @@ const styles = StyleSheet.create({
     color: '#6366F1',
   },
   invoiceModalContent: {
+    flex: 1,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
