@@ -11,8 +11,9 @@ import {
   Modal,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Building2, Save, ShieldCheck, X, ChevronRight, DollarSign } from 'lucide-react-native';
+import { Building2, Save, ShieldCheck, X, ChevronRight } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getCurrencySymbol } from '@/constants/currency';
 
 const SETTINGS_KEY = '@inventory_settings';
 
@@ -191,10 +192,16 @@ export default function SettingsScreen() {
                 }}
               >
                 <View style={styles.currencyOptionContent}>
-                  <DollarSign
-                    size={20}
-                    color={currency === curr ? '#6366F1' : '#6B7280'}
-                  />
+                  <View style={styles.currencySymbolContainer}>
+                    <Text
+                      style={[
+                        styles.currencySymbol,
+                        currency === curr && styles.currencySymbolSelected,
+                      ]}
+                    >
+                      {getCurrencySymbol(curr)}
+                    </Text>
+                  </View>
                   <Text
                     style={[
                       styles.currencyOptionText,
@@ -550,5 +557,18 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: '#6366F1',
+  },
+  currencySymbolContainer: {
+    width: 24,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
+  currencySymbol: {
+    fontSize: 18,
+    fontWeight: '600' as const,
+    color: '#6B7280',
+  },
+  currencySymbolSelected: {
+    color: '#6366F1',
   },
 });
