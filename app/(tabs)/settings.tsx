@@ -240,9 +240,7 @@ export default function SettingsScreen() {
                   <View
                     style={[
                       styles.currencySymbolContainer,
-                      currency === curr.code && {
-                        backgroundColor: '#FFFFFF',
-                      },
+                      currency === curr.code && styles.currencySymbolContainerSelected,
                     ]}
                   >
                     <Text
@@ -677,13 +675,16 @@ const styles = StyleSheet.create({
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
   },
+  currencySymbolContainerSelected: {
+    backgroundColor: '#FFFFFF',
+  },
   currencySymbol: {
     fontSize: 22,
     fontWeight: '700' as const,
     color: '#374151',
   },
   currencySymbolSelected: {
-    color: '#FFFFFF',
+    color: '#6366F1',
   },
   currencyNameContainer: {
     flex: 1,
