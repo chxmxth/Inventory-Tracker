@@ -178,7 +178,7 @@ export default function SettingsScreen() {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.currencyListContainer}
           >
-            {['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR', 'MXN', 'BRL', 'ZAR', 'KRW', 'SGD', 'HKD', 'NZD', 'SEK', 'NOK', 'DKK', 'PLN', 'THB', 'IDR', 'MYR', 'PHP', 'AED', 'SAR', 'TRY', 'RUB'].map((curr) => (
+            {['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR', 'MXN', 'BRL', 'ZAR', 'KRW', 'SGD', 'HKD', 'NZD', 'SEK', 'NOK', 'DKK', 'PLN', 'THB', 'IDR', 'MYR', 'PHP', 'AED', 'SAR', 'TRY', 'RUB', 'LKR'].map((curr) => (
               <TouchableOpacity
                 key={curr}
                 style={[
