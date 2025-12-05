@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.catronics.inventorymanagement",
+      "bundleIdentifier": "com.catronics.inventory",
       "buildNumber": "2",
       "infoPlist": {
         "UIRequiresFullScreen": false
