@@ -19,6 +19,7 @@ import * as Sharing from 'expo-sharing';
 import { useInventory } from '@/contexts/InventoryContext';
 import type { Transaction } from '@/types/inventory';
 import { getCurrencySymbol } from '@/constants/currency';
+import { rf } from '@/constants/responsiveFonts';
 
 const SETTINGS_KEY = '@inventory_settings';
 
@@ -811,13 +812,13 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E5E7EB',
   },
   title: {
-    fontSize: 32,
+    fontSize: rf(32),
     fontWeight: '700' as const,
     color: '#111827',
     marginBottom: 4,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
   },
   searchContainer: {
@@ -836,7 +837,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     marginLeft: 12,
-    fontSize: 16,
+    fontSize: rf(16),
     color: '#111827',
   },
   filterContainer: {
@@ -858,7 +859,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#6366F1',
   },
   filterText: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#6B7280',
   },
@@ -876,13 +877,13 @@ const styles = StyleSheet.create({
     paddingVertical: 60,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: rf(20),
     fontWeight: '600' as const,
     color: '#111827',
     marginTop: 16,
   },
   emptySubtitle: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
     marginTop: 8,
     textAlign: 'center' as const,
@@ -929,7 +930,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   productName: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#111827',
     marginBottom: 4,
@@ -940,14 +941,14 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   transactionDate: {
-    fontSize: 12,
+    fontSize: rf(12),
     color: '#9CA3AF',
   },
   transactionRight: {
     alignItems: 'flex-end' as const,
   },
   transactionAmount: {
-    fontSize: 18,
+    fontSize: rf(18),
     fontWeight: '700' as const,
     marginBottom: 4,
   },
@@ -961,7 +962,7 @@ const styles = StyleSheet.create({
     color: '#EF4444',
   },
   transactionQuantity: {
-    fontSize: 12,
+    fontSize: rf(12),
     color: '#6B7280',
   },
   profitBadge: {
@@ -973,7 +974,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start' as const,
   },
   profitText: {
-    fontSize: 12,
+    fontSize: rf(12),
     fontWeight: '600' as const,
     color: '#059669',
   },
@@ -986,13 +987,13 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start' as const,
   },
   removalReasonText: {
-    fontSize: 12,
+    fontSize: rf(12),
     fontWeight: '600' as const,
     color: '#DC2626',
   },
   transactionNotes: {
     marginTop: 12,
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
     fontStyle: 'italic' as const,
   },
@@ -1032,12 +1033,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E5E7EB',
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: rf(20),
     fontWeight: '700' as const,
     color: '#111827',
   },
   modalClose: {
-    fontSize: 24,
+    fontSize: rf(24),
     color: '#9CA3AF',
   },
   typeSelector: {
@@ -1061,7 +1062,7 @@ const styles = StyleSheet.create({
     borderColor: '#6366F1',
   },
   typeButtonText: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#6B7280',
   },
@@ -1072,7 +1073,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   label: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#374151',
     marginBottom: 8,
@@ -1095,7 +1096,7 @@ const styles = StyleSheet.create({
     borderColor: '#6366F1',
   },
   productChipText: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#6B7280',
   },
@@ -1103,7 +1104,7 @@ const styles = StyleSheet.create({
     color: '#6366F1',
   },
   productChipStock: {
-    fontSize: 11,
+    fontSize: rf(11),
     color: '#9CA3AF',
     marginTop: 2,
   },
@@ -1114,7 +1115,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    fontSize: 16,
+    fontSize: rf(16),
     color: '#111827',
   },
   textArea: {
@@ -1133,7 +1134,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   submitButtonText: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#FFFFFF',
   },
@@ -1151,7 +1152,7 @@ const styles = StyleSheet.create({
     borderColor: '#C7D2FE',
   },
   invoiceButtonText: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#6366F1',
   },
@@ -1174,7 +1175,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   invoiceCompany: {
-    fontSize: 28,
+    fontSize: rf(28),
     fontWeight: '700' as const,
     color: '#111827',
   },
@@ -1184,7 +1185,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   invoiceTitle: {
-    fontSize: 20,
+    fontSize: rf(20),
     fontWeight: '700' as const,
     color: '#374151',
     marginBottom: 16,
@@ -1204,12 +1205,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E5E7EB',
   },
   invoiceDetailLabel: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#6B7280',
   },
   invoiceDetailValue: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '500' as const,
     color: '#111827',
     textAlign: 'right' as const,
@@ -1228,7 +1229,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF3C7',
   },
   invoiceTypeBadgeText: {
-    fontSize: 12,
+    fontSize: rf(12),
     fontWeight: '700' as const,
   },
   invoiceTypeSaleText: {
@@ -1253,7 +1254,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   invoiceItemsHeaderText: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#374151',
   },
@@ -1266,16 +1267,16 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E5E7EB',
   },
   invoiceProductName: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '700' as const,
     color: '#111827',
   },
   invoiceItemLabel: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
   },
   invoiceItemValue: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '500' as const,
     color: '#111827',
   },
@@ -1285,12 +1286,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   invoiceTotalLabel: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '700' as const,
     color: '#374151',
   },
   invoiceTotalValue: {
-    fontSize: 20,
+    fontSize: rf(20),
     fontWeight: '700' as const,
     color: '#111827',
   },
@@ -1321,13 +1322,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   invoiceNotesLabel: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#92400E',
     marginBottom: 8,
   },
   invoiceNotesText: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#78350F',
     fontStyle: 'italic' as const,
   },
@@ -1339,7 +1340,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   invoiceFooterText: {
-    fontSize: 11,
+    fontSize: rf(11),
     color: '#9CA3AF',
     textAlign: 'center' as const,
     marginBottom: 4,
@@ -1356,7 +1357,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   printButtonText: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#FFFFFF',
   },

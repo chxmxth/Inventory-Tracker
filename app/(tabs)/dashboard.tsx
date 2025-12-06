@@ -12,6 +12,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useInventory } from '@/contexts/InventoryContext';
+import { rf } from '@/constants/responsiveFonts';
 
 export default function DashboardScreen() {
   const router = useRouter();
@@ -190,13 +191,13 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   headerTitle: {
-    fontSize: 32,
+    fontSize: rf(32),
     fontWeight: '700' as const,
     color: '#111827',
     marginBottom: 4,
   },
   headerSubtitle: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
   },
   metricsGrid: {
@@ -224,13 +225,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   metricValue: {
-    fontSize: 24,
+    fontSize: rf(24),
     fontWeight: '700' as const,
     color: '#fff',
     marginBottom: 4,
   },
   metricLabel: {
-    fontSize: 12,
+    fontSize: rf(12),
     color: 'rgba(255, 255, 255, 0.8)',
   },
   profitCard: {
@@ -245,18 +246,18 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   profitTitle: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
     marginBottom: 8,
   },
   profitAmount: {
-    fontSize: 36,
+    fontSize: rf(36),
     fontWeight: '700' as const,
     color: '#10B981',
     marginBottom: 4,
   },
   profitLabel: {
-    fontSize: 16,
+    fontSize: rf(16),
     color: '#111827',
     marginBottom: 20,
   },
@@ -275,12 +276,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   profitDetailLabel: {
-    fontSize: 12,
+    fontSize: rf(12),
     color: '#6B7280',
     marginBottom: 4,
   },
   profitDetailValue: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#111827',
   },
@@ -294,13 +295,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: rf(18),
     fontWeight: '600' as const,
     color: '#111827',
     marginBottom: 12,
   },
   seeAllText: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#1E40AF',
     fontWeight: '600' as const,
   },
@@ -322,13 +323,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   lowStockName: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#111827',
     marginBottom: 2,
   },
   lowStockCategory: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
   },
   lowStockBadge: {
@@ -338,7 +339,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   lowStockBadgeText: {
-    fontSize: 12,
+    fontSize: rf(12),
     fontWeight: '600' as const,
     color: '#D97706',
   },
@@ -360,17 +361,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   transactionName: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#111827',
     marginBottom: 2,
   },
   transactionDetails: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
   },
   transactionAmount: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
   },
   transactionAmountPositive: {
@@ -400,12 +401,12 @@ const styles = StyleSheet.create({
     borderColor: '#1E40AF',
   },
   quickActionText: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#fff',
   },
   quickActionTextSecondary: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#1E40AF',
   },

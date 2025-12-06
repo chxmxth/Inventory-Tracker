@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Building2, Save, ShieldCheck, X, ChevronRight } from 'lucide-react-native';
 import { getCurrencySymbol } from '@/constants/currency';
 import { useInventory } from '@/contexts/InventoryContext';
+import { rf } from '@/constants/responsiveFonts';
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
@@ -395,13 +396,13 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E5E7EB',
   },
   title: {
-    fontSize: 32,
+    fontSize: rf(32),
     fontWeight: '700' as const,
     color: '#111827',
     marginBottom: 4,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
   },
   content: {
@@ -427,18 +428,18 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: rf(18),
     fontWeight: '600' as const,
     color: '#111827',
   },
   label: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#374151',
     marginBottom: 4,
   },
   description: {
-    fontSize: 12,
+    fontSize: rf(12),
     color: '#6B7280',
     marginBottom: 12,
   },
@@ -449,7 +450,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    fontSize: 16,
+    fontSize: rf(16),
     color: '#111827',
     marginBottom: 20,
   },
@@ -466,7 +467,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   saveButtonText: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#FFFFFF',
   },
@@ -478,13 +479,13 @@ const styles = StyleSheet.create({
     borderLeftColor: '#6366F1',
   },
   infoTitle: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#4338CA',
     marginBottom: 8,
   },
   infoText: {
-    fontSize: 13,
+    fontSize: rf(13),
     color: '#6366F1',
     lineHeight: 18,
   },
@@ -500,7 +501,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   privacyButtonText: {
-    fontSize: 16,
+    fontSize: rf(16),
     color: '#111827',
     fontWeight: '500' as const,
   },
@@ -519,7 +520,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between' as const,
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: rf(24),
     fontWeight: '700' as const,
     color: '#111827',
   },
@@ -535,17 +536,17 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   privacyText: {
-    fontSize: 15,
+    fontSize: rf(15),
     lineHeight: 24,
     color: '#374151',
   },
   privacyHeading: {
-    fontSize: 20,
+    fontSize: rf(20),
     fontWeight: '700' as const,
     color: '#111827',
   },
   privacySubheading: {
-    fontSize: 17,
+    fontSize: rf(17),
     fontWeight: '600' as const,
     color: '#111827',
   },
@@ -589,18 +590,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center' as const,
   },
   selectedCurrencySymbol: {
-    fontSize: 20,
+    fontSize: rf(20),
     fontWeight: '700' as const,
     color: '#6366F1',
   },
   selectedCurrencyCode: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#111827',
     marginBottom: 2,
   },
   selectedCurrencyName: {
-    fontSize: 13,
+    fontSize: rf(13),
     color: '#6B7280',
   },
   currencyListContainer: {
@@ -663,7 +664,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   currencySymbol: {
-    fontSize: 22,
+    fontSize: rf(22),
     fontWeight: '700' as const,
     color: '#374151',
   },
@@ -674,7 +675,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   currencyCode: {
-    fontSize: 17,
+    fontSize: rf(17),
     fontWeight: '700' as const,
     color: '#111827',
     marginBottom: 3,
@@ -684,7 +685,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   currencyName: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
     letterSpacing: 0.2,
   },

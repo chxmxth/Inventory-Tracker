@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useInventory } from '@/contexts/InventoryContext';
 import type { Product } from '@/types/inventory';
+import { rf } from '@/constants/responsiveFonts';
 
 export default function ProductsScreen() {
   const insets = useSafeAreaInsets();
@@ -516,13 +517,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
   },
   title: {
-    fontSize: 32,
+    fontSize: rf(32),
     fontWeight: '700' as const,
     color: '#111827',
     marginBottom: 4,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
   },
   searchContainer: {
@@ -545,7 +546,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     paddingVertical: 14,
-    fontSize: 16,
+    fontSize: rf(16),
     color: '#111827',
   },
   listContent: {
@@ -573,13 +574,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   productName: {
-    fontSize: 18,
+    fontSize: rf(18),
     fontWeight: '600' as const,
     color: '#111827',
     marginBottom: 4,
   },
   productCategory: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
   },
   productActions: {
@@ -598,11 +599,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   productDetailLabel: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
   },
   productDetailValue: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#111827',
   },
@@ -613,14 +614,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: rf(20),
     fontWeight: '600' as const,
     color: '#111827',
     marginTop: 16,
     marginBottom: 8,
   },
   emptySubtitle: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
     textAlign: 'center',
   },
@@ -661,12 +662,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#F3F4F6',
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: rf(20),
     fontWeight: '700' as const,
     color: '#111827',
   },
   modalClose: {
-    fontSize: 24,
+    fontSize: rf(24),
     color: '#6B7280',
   },
   modalBody: {
@@ -676,7 +677,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   formLabel: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#111827',
     marginBottom: 8,
@@ -688,7 +689,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    fontSize: 16,
+    fontSize: rf(16),
     color: '#111827',
   },
   formRow: {
@@ -713,7 +714,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButtonText: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#6B7280',
   },
@@ -725,7 +726,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   saveButtonText: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#fff',
   },
@@ -736,18 +737,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   removeInfoLabel: {
-    fontSize: 12,
+    fontSize: rf(12),
     color: '#92400E',
     marginBottom: 4,
   },
   removeInfoValue: {
-    fontSize: 18,
+    fontSize: rf(18),
     fontWeight: '700' as const,
     color: '#111827',
     marginBottom: 4,
   },
   removeInfoStock: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#78350F',
   },
   reasonButtons: {
@@ -768,7 +769,7 @@ const styles = StyleSheet.create({
     borderColor: '#F59E0B',
   },
   reasonButtonText: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#6B7280',
   },
@@ -787,7 +788,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   removeButtonText: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#fff',
   },

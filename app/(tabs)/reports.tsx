@@ -20,6 +20,7 @@ import {
 } from 'lucide-react-native';
 import { useInventory } from '@/contexts/InventoryContext';
 import type { DateRange } from '@/types/inventory';
+import { rf } from '@/constants/responsiveFonts';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
@@ -407,13 +408,13 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E5E7EB',
   },
   title: {
-    fontSize: 32,
+    fontSize: rf(32),
     fontWeight: '700' as const,
     color: '#111827',
     marginBottom: 4,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#6B7280',
   },
   rangeSelector: {
@@ -433,7 +434,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#6366F1',
   },
   rangeText: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#6B7280',
   },
@@ -448,7 +449,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: rf(18),
     fontWeight: '700' as const,
     color: '#111827',
     marginBottom: 16,
@@ -485,12 +486,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center' as const,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: rf(12),
     color: '#6B7280',
     marginBottom: 4,
   },
   statValue: {
-    fontSize: 20,
+    fontSize: rf(20),
     fontWeight: '700' as const,
   },
   profitLossSection: {
@@ -525,15 +526,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center' as const,
   },
   profitLossLabel: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#374151',
   },
   profitLossValue: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
   },
   netProfit: {
-    fontSize: 18,
+    fontSize: rf(18),
     fontWeight: '700' as const,
     color: '#3B82F6',
   },
@@ -574,7 +575,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   rankText: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '700' as const,
     color: '#6366F1',
   },
@@ -582,17 +583,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topProductName: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '600' as const,
     color: '#111827',
     marginBottom: 2,
   },
   topProductQuantity: {
-    fontSize: 12,
+    fontSize: rf(12),
     color: '#6B7280',
   },
   topProductRevenue: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '700' as const,
     color: '#10B981',
   },
@@ -617,7 +618,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   exportButtonText: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '600' as const,
     color: '#374151',
   },
