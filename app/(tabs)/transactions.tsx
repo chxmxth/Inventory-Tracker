@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,26 +11,19 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Plus, Search, TrendingUp, TrendingDown, Calendar, Package, AlertTriangle, FileText } from 'lucide-react-native';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { useInventory } from '@/contexts/InventoryContext';
 import type { Transaction } from '@/types/inventory';
-import { getCurrencySymbol } from '@/constants/currency';
+
 import { rf } from '@/constants/responsiveFonts';
-
-const SETTINGS_KEY = '@inventory_settings';
-
-interface Settings {
-  companyName: string;
-  currency: string;
-}
 
 export default function TransactionsScreen() {
   const insets = useSafeAreaInsets();
-  const { transactions, products, addTransaction, isLoading } = useInventory();
+  const { transactions, products, addTransaction, isLoading, currencySymbol, companyName } = useInventory();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'sale' | 'purchase' | 'removal'>('all');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -41,33 +34,8 @@ export default function TransactionsScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
-  const [companyName, setCompanyName] = useState('Inventory Manager');
-  const [currencySymbol, setCurrencySymbol] = useState('Rs.');
 
-  useEffect(() => {
-    loadSettings();
-  }, []);
 
-  useEffect(() => {
-    if (showInvoiceModal) {
-      loadSettings();
-    }
-  }, [showInvoiceModal]);
-
-  const loadSettings = async () => {
-    try {
-      const settingsData = await AsyncStorage.getItem(SETTINGS_KEY);
-      if (settingsData) {
-        const settings: Settings = JSON.parse(settingsData);
-        if (settings.companyName) {
-          setCompanyName(settings.companyName);
-        }
-        setCurrencySymbol(getCurrencySymbol(settings.currency || 'LKR'));
-      }
-    } catch (error) {
-      console.error('Error loading settings:', error);
-    }
-  };
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter((transaction) => {
