@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   StyleSheet,
   Text,
@@ -89,9 +89,9 @@ export default function TransactionsScreen() {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return `${currencySymbol} ${amount.toLocaleString()}`;
-  };
+  const formatCurrency = useCallback((amount: number) => {
+    return `${currencySymbol}${amount.toLocaleString()}`;
+  }, [currencySymbol]);
 
   const generateInvoiceHTML = (transaction: Transaction) => {
     const date = new Date(transaction.date);
