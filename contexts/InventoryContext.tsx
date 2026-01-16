@@ -19,8 +19,8 @@ export const [InventoryProvider, useInventory] = createContextHook(() => {
   const [products, setProducts] = useState<Product[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currency, setCurrency] = useState('LKR');
-  const [currencySymbol, setCurrencySymbol] = useState('Rs.');
+  const [currency, setCurrency] = useState('USD');
+  const [currencySymbol, setCurrencySymbol] = useState('$');
   const [companyName, setCompanyName] = useState('');
 
   const loadData = useCallback(async () => {
@@ -39,8 +39,8 @@ export const [InventoryProvider, useInventory] = createContextHook(() => {
       }
       if (settingsData) {
         const settings: Settings = JSON.parse(settingsData);
-        setCurrency(settings.currency || 'LKR');
-        setCurrencySymbol(getCurrencySymbol(settings.currency || 'LKR'));
+        setCurrency(settings.currency || 'USD');
+        setCurrencySymbol(getCurrencySymbol(settings.currency || 'USD'));
         setCompanyName(settings.companyName || '');
       }
     } catch (error) {
